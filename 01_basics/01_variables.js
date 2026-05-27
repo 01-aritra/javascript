@@ -4,7 +4,4 @@ let accountName = "Aritra";
 let accountEmailId = "aritramishra64@gmail.com" 
 var accountPassword = "12345"
 
-accountID = 2
-
-
-console.log();
+console.log(accountID);
