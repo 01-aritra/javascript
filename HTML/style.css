@@ -19,7 +19,14 @@ header{
     top: 0;
 }
 
-.aritra{
-    margin: 0;
+.navber{
+    display: flex;
+    justify-content: space-between;
     align-items: center;
 }
+
+.logo{
+    color: #4f46e5;
+    font-size: 28px;
+}
+
