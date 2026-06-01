@@ -1,0 +1,472 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:var(--color-text-primary);--ink2:var(--color-text-secondary);--ink3:var(--color-text-tertiary);
+  --bg:var(--color-background-tertiary);--bg2:var(--color-background-secondary);--bg3:var(--color-border-tertiary);
+  --card:var(--color-background-primary);
+  --accent:#2d5be3;--accent2:#e83b6f;--accent3:#f59e0b;--accent4:#10b981;--accent5:#8b5cf6;
+  --r:12px;--r2:8px;
+  font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink)
+}
+.page{display:none;flex-direction:column;gap:14px;padding:2px 0}
+.page.active{display:flex}
+.page-tabs{display:flex;gap:0;border-bottom:1px solid var(--bg3);margin-bottom:4px}
+.ptab{padding:9px 16px;font-size:13px;cursor:pointer;color:var(--ink2);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap}
+.ptab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500}
+.ptab:hover:not(.active){color:var(--ink)}
+.panel{background:var(--card);border-radius:var(--r);border:1px solid var(--bg3);overflow:hidden}
+.ph{padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bg3)}
+.ph-title{font-size:13.5px;font-weight:500}
+.ph-ml{margin-left:auto;display:flex;align-items:center;gap:8px}
+.btn{padding:6px 14px;border-radius:var(--r2);font-size:12.5px;cursor:pointer;border:1px solid var(--bg3);background:var(--card);color:var(--ink);font-family:'DM Sans',sans-serif;transition:background .12s}
+.btn:hover{background:var(--bg2)}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{background:#2348c5}
+.badge{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat{background:var(--card);border-radius:var(--r2);padding:14px 16px;border:1px solid var(--bg3)}
+.stat .lbl{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.stat .num{font-size:22px;font-weight:600;font-family:'Fraunces',serif;line-height:1}
+.stat .sub{font-size:11px;color:var(--ink3);margin-top:4px}
+.tbl{width:100%;border-collapse:collapse;table-layout:fixed}
+.tbl th{padding:9px 14px;text-align:left;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);background:var(--bg2);border-bottom:1px solid var(--bg3)}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--bg3);font-size:13px;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--bg2)}
+.tbl tr{cursor:pointer}
+.av{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;vertical-align:middle;margin-right:8px}
+.inp{height:34px;background:var(--bg2);border:1px solid var(--bg3);border-radius:var(--r2);padding:0 10px;font-size:13px;color:var(--ink);font-family:'DM Sans',sans-serif;outline:none}
+.inp:focus{border-color:var(--accent)}
+select.inp{cursor:pointer}
+.filter-row{display:flex;gap:8px;align-items:center;padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--bg3);flex-wrap:wrap}
+.pager{display:flex;align-items:center;gap:6px;padding:10px 16px;border-top:1px solid var(--bg3);justify-content:space-between}
+.pager-info{font-size:12px;color:var(--ink3)}
+.pager-btns{display:flex;gap:4px}
+.pg-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--bg3);background:var(--card);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;color:var(--ink2)}
+.pg-btn:hover{background:var(--bg2)}
+.pg-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.att-grid{display:grid;grid-template-columns:200px 1fr;border-bottom:1px solid var(--bg3)}
+.att-names{border-right:1px solid var(--bg3)}
+.att-name-hd{padding:9px 14px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);background:var(--bg2);border-bottom:1px solid var(--bg3)}
+.att-name-row{padding:9px 14px;font-size:13px;border-bottom:1px solid var(--bg3);display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.att-name-row:last-child{border-bottom:none}
+.att-days{overflow-x:auto}
+.att-days-hd{display:flex;background:var(--bg2);border-bottom:1px solid var(--bg3)}
+.att-day-cell{min-width:36px;text-align:center;padding:9px 4px;font-size:11px;color:var(--ink3);font-weight:500;flex-shrink:0}
+.att-row{display:flex;border-bottom:1px solid var(--bg3)}
+.att-row:last-child{border-bottom:none}
+.att-cell{min-width:36px;height:38px;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:background .1s}
+.att-cell:hover{background:var(--bg2)}
+.att-p{background:#dcfce7;color:#15803d;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
+.att-a{background:#fee2e2;color:#b91c1c;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
+.att-l{background:#fef9c3;color:#854d0e;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
+.att-h{background:var(--bg2);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--ink3)}
+.fee-row-card{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--bg3);cursor:pointer;transition:background .12s}
+.fee-row-card:hover{background:var(--bg2)}
+.fee-row-card:last-child{border-bottom:none}
+.progress-bar{height:5px;background:var(--bg2);border-radius:20px;overflow:hidden;margin-top:4px;width:120px}
+.progress-fill{height:5px;border-radius:20px}
+.modal-overlay{background:rgba(0,0,0,.4);border-radius:var(--r);padding:20px;display:flex;align-items:flex-start;justify-content:center}
+.modal{background:var(--card);border-radius:var(--r);border:1px solid var(--bg3);width:100%;max-width:480px;overflow:hidden}
+.modal-hd{padding:14px 18px;border-bottom:1px solid var(--bg3);display:flex;align-items:center;justify-content:space-between}
+.modal-body{padding:18px}
+.form-row{margin-bottom:14px}
+.form-row label{display:block;font-size:12px;color:var(--ink2);margin-bottom:5px;font-weight:500}
+.form-row .inp{width:100%}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.section-hd{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--bg3)}
+.chip-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.chip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--bg3);color:var(--ink2);transition:all .12s}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.exam-card{background:var(--card);border-radius:var(--r2);border:1px solid var(--bg3);padding:14px 16px;cursor:pointer;transition:transform .12s}
+.exam-card:hover{transform:translateY(-1px)}
+.exam-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px}
+.pay-method{display:flex;gap:8px;margin-top:6px}
+.pm-card{flex:1;border:1px solid var(--bg3);border-radius:var(--r2);padding:10px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;transition:border-color .12s}
+.pm-card:hover,.pm-card.active{border-color:var(--accent);background:#dbeafe22}
+.pm-card.active{border-width:1.5px}
+</style>
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">EduPrime module pages — Students, Attendance, Fee Management, Examinations, and Enroll Student form</h2>
+
+<div class="page-tabs">
+  <div class="ptab active" onclick="showPage('students',this)"><i class="ti ti-users" style="margin-right:5px;font-size:13px"></i>Students</div>
+  <div class="ptab" onclick="showPage('attendance',this)"><i class="ti ti-calendar-check" style="margin-right:5px;font-size:13px"></i>Attendance</div>
+  <div class="ptab" onclick="showPage('fees',this)"><i class="ti ti-credit-card" style="margin-right:5px;font-size:13px"></i>Fee Management</div>
+  <div class="ptab" onclick="showPage('exams',this)"><i class="ti ti-file-pencil" style="margin-right:5px;font-size:13px"></i>Examinations</div>
+  <div class="ptab" onclick="showPage('enroll',this)"><i class="ti ti-user-plus" style="margin-right:5px;font-size:13px"></i>Enroll Student</div>
+</div>
+
+<!-- STUDENTS PAGE -->
+<div class="page active" id="page-students">
+  <div class="stats-row">
+    <div class="stat"><div class="lbl">Total enrolled</div><div class="num">1,204</div><div class="sub">Active this year</div></div>
+    <div class="stat"><div class="lbl">New admissions</div><div class="num">38</div><div class="sub">This month</div></div>
+    <div class="stat"><div class="lbl">Avg attendance</div><div class="num">91.3%</div><div class="sub">Last 30 days</div></div>
+    <div class="stat"><div class="lbl">Fee defaulters</div><div class="num" style="color:#e83b6f">24</div><div class="sub">Pending follow-up</div></div>
+  </div>
+  <div class="panel">
+    <div class="filter-row">
+      <input class="inp" type="text" placeholder="Search by name or roll no..." style="width:220px" id="stu-search" oninput="filterStudents()">
+      <select class="inp" onchange="filterStudents()" id="stu-class">
+        <option value="">All Classes</option>
+        <option>Class VI</option><option>Class VII</option><option>Class VIII</option>
+        <option>Class IX</option><option>Class X</option><option>Class XI</option><option>Class XII</option>
+      </select>
+      <select class="inp" onchange="filterStudents()" id="stu-section">
+        <option value="">All Sections</option>
+        <option>Section A</option><option>Section B</option><option>Section C</option>
+      </select>
+      <select class="inp" onchange="filterStudents()" id="stu-status">
+        <option value="">All Status</option>
+        <option>Active</option><option>Inactive</option>
+      </select>
+      <div class="ph-ml">
+        <button class="btn btn-primary" onclick="showPage('enroll',document.querySelectorAll('.ptab')[4])"><i class="ti ti-user-plus" style="margin-right:4px"></i>Enroll Student</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="tbl" id="stu-table">
+        <thead>
+          <tr>
+            <th style="width:44px">#</th>
+            <th style="width:200px">Student</th>
+            <th style="width:90px">Class</th>
+            <th style="width:80px">Roll No</th>
+            <th style="width:110px">Attendance</th>
+            <th style="width:80px">Grade</th>
+            <th style="width:90px">Fee Status</th>
+            <th style="width:80px">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="stu-tbody"></tbody>
+      </table>
+    </div>
+    <div class="pager">
+      <div class="pager-info" id="stu-pager-info">Showing 1–10 of 1,204</div>
+      <div class="pager-btns">
+        <div class="pg-btn"><i class="ti ti-chevron-left" style="font-size:12px"></i></div>
+        <div class="pg-btn active">1</div>
+        <div class="pg-btn">2</div>
+        <div class="pg-btn">3</div>
+        <div class="pg-btn">…</div>
+        <div class="pg-btn">121</div>
+        <div class="pg-btn"><i class="ti ti-chevron-right" style="font-size:12px"></i></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ATTENDANCE PAGE -->
+<div class="page" id="page-attendance">
+  <div class="stats-row">
+    <div class="stat"><div class="lbl">Present today</div><div class="num" style="color:#10b981">1,098</div><div class="sub">of 1,204 students</div></div>
+    <div class="stat"><div class="lbl">Absent today</div><div class="num" style="color:#e83b6f">72</div><div class="sub">Notifications sent</div></div>
+    <div class="stat"><div class="lbl">On leave</div><div class="num" style="color:#f59e0b">34</div><div class="sub">Approved leaves</div></div>
+    <div class="stat"><div class="lbl">Not marked</div><div class="num" style="color:#8b5cf6">3</div><div class="sub">Classes pending</div></div>
+  </div>
+  <div class="panel">
+    <div class="ph">
+      <div class="ph-title">Class Attendance Register</div>
+      <div class="ph-ml">
+        <select class="inp" id="att-class-sel" onchange="renderAtt()">
+          <option>Class X-A</option><option>Class X-B</option><option>Class IX-A</option><option>Class VIII-B</option>
+        </select>
+        <select class="inp" id="att-month-sel" onchange="renderAtt()">
+          <option>June 2026</option><option>May 2026</option><option>April 2026</option>
+        </select>
+        <button class="btn" onclick="sendPrompt('How does the attendance marking and notification system work in EduPrime?')">Export PDF ↗</button>
+      </div>
+    </div>
+    <div class="att-grid" id="att-grid"></div>
+    <div style="display:flex;gap:14px;padding:10px 16px;align-items:center;font-size:12px;color:var(--ink2);border-top:1px solid var(--bg3)">
+      <span><span class="att-p" style="display:inline-flex;width:18px;height:18px;font-size:10px;margin-right:4px">P</span>Present</span>
+      <span><span class="att-a" style="display:inline-flex;width:18px;height:18px;font-size:10px;margin-right:4px">A</span>Absent</span>
+      <span><span class="att-l" style="display:inline-flex;width:18px;height:18px;font-size:10px;margin-right:4px">L</span>Leave</span>
+      <span><span class="att-h" style="display:inline-flex;width:18px;height:18px;font-size:10px;margin-right:4px">H</span>Holiday</span>
+      <button class="btn btn-primary" style="margin-left:auto" onclick="sendPrompt('Walk me through marking daily attendance for a class')">Mark Today ↗</button>
+    </div>
+  </div>
+</div>
+
+<!-- FEE PAGE -->
+<div class="page" id="page-fees">
+  <div class="stats-row">
+    <div class="stat"><div class="lbl">Collected this month</div><div class="num">₹8.41L</div><div class="sub">of ₹9.7L target</div></div>
+    <div class="stat"><div class="lbl">Pending dues</div><div class="num" style="color:#e83b6f">₹1.2L</div><div class="sub">24 students</div></div>
+    <div class="stat"><div class="lbl">Scholarships active</div><div class="num">18</div><div class="sub">Total ₹54,000 relief</div></div>
+    <div class="stat"><div class="lbl">Receipts issued</div><div class="num">847</div><div class="sub">This month</div></div>
+  </div>
+  <div class="panel">
+    <div class="ph">
+      <div class="ph-title">Fee Ledger</div>
+      <div class="ph-ml">
+        <select class="inp">
+          <option>June 2026</option><option>May 2026</option><option>April 2026</option>
+        </select>
+        <select class="inp">
+          <option>All Classes</option><option>Class X</option><option>Class IX</option><option>Class VIII</option>
+        </select>
+        <button class="btn btn-primary" onclick="sendPrompt('How does online fee payment and receipt generation work in EduPrime?')">Collect Fee ↗</button>
+      </div>
+    </div>
+    <div id="fee-list"></div>
+  </div>
+</div>
+
+<!-- EXAMS PAGE -->
+<div class="page" id="page-exams">
+  <div class="stats-row">
+    <div class="stat"><div class="lbl">Upcoming exams</div><div class="num">3</div><div class="sub">Next: Jun 2</div></div>
+    <div class="stat"><div class="lbl">Results pending</div><div class="num" style="color:#f59e0b">1</div><div class="sub">Unit Test I</div></div>
+    <div class="stat"><div class="lbl">Pass rate</div><div class="num" style="color:#10b981">94.2%</div><div class="sub">Last exam cycle</div></div>
+    <div class="stat"><div class="lbl">Toppers</div><div class="num">12</div><div class="sub">Scored above 95%</div></div>
+  </div>
+  <div class="exam-grid">
+    <div class="exam-card" onclick="sendPrompt('How does exam scheduling work in EduPrime ERP?')">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:40px;height:40px;border-radius:var(--r2);background:#fee2e2;display:flex;align-items:center;justify-content:center"><i class="ti ti-file-pencil" style="color:#b91c1c;font-size:18px"></i></div>
+        <div><div style="font-size:14px;font-weight:500">Unit Test II</div><div style="font-size:11.5px;color:var(--ink3)">Classes VI–XII</div></div>
+        <span class="badge" style="margin-left:auto;background:#fee2e2;color:#b91c1c">Upcoming</span>
+      </div>
+      <div style="font-size:12px;color:var(--ink3);display:flex;flex-direction:column;gap:4px">
+        <span><i class="ti ti-calendar" style="font-size:12px;margin-right:4px"></i>June 2 – June 6, 2026</span>
+        <span><i class="ti ti-users" style="font-size:12px;margin-right:4px"></i>1,204 students</span>
+        <span><i class="ti ti-clock" style="font-size:12px;margin-right:4px"></i>Duration: 90 min / paper</span>
+      </div>
+    </div>
+    <div class="exam-card" onclick="sendPrompt('How are half-yearly exam timetables generated in EduPrime?')">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:40px;height:40px;border-radius:var(--r2);background:#ede9fe;display:flex;align-items:center;justify-content:center"><i class="ti ti-clipboard-list" style="color:#7c3aed;font-size:18px"></i></div>
+        <div><div style="font-size:14px;font-weight:500">Half-Yearly Exams</div><div style="font-size:11.5px;color:var(--ink3)">All classes</div></div>
+        <span class="badge" style="margin-left:auto;background:#ede9fe;color:#6d28d9">Scheduled</span>
+      </div>
+      <div style="font-size:12px;color:var(--ink3);display:flex;flex-direction:column;gap:4px">
+        <span><i class="ti ti-calendar" style="font-size:12px;margin-right:4px"></i>June 21 – July 4, 2026</span>
+        <span><i class="ti ti-users" style="font-size:12px;margin-right:4px"></i>1,204 students</span>
+        <span><i class="ti ti-clock" style="font-size:12px;margin-right:4px"></i>Duration: 3 hrs / paper</span>
+      </div>
+    </div>
+    <div class="exam-card" onclick="sendPrompt('How does result publishing and gradebook work in EduPrime ERP?')">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:40px;height:40px;border-radius:var(--r2);background:#fef9c3;display:flex;align-items:center;justify-content:center"><i class="ti ti-chart-bar" style="color:#ca8a04;font-size:18px"></i></div>
+        <div><div style="font-size:14px;font-weight:500">Unit Test I — Results</div><div style="font-size:11.5px;color:var(--ink3)">Pending publication</div></div>
+        <span class="badge" style="margin-left:auto;background:#fef9c3;color:#854d0e">Pending</span>
+      </div>
+      <div style="font-size:12px;color:var(--ink3);display:flex;flex-direction:column;gap:4px">
+        <span><i class="ti ti-check" style="font-size:12px;margin-right:4px"></i>Grading complete for 7/8 subjects</span>
+        <span><i class="ti ti-users" style="font-size:12px;margin-right:4px"></i>Pass rate: 96.1%</span>
+        <span><i class="ti ti-alert-circle" style="font-size:12px;margin-right:4px"></i>Science results outstanding</span>
+      </div>
+    </div>
+    <div class="exam-card" onclick="sendPrompt('How do I create a new examination schedule in EduPrime?')">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:40px;height:40px;border-radius:var(--r2);background:#dcfce7;display:flex;align-items:center;justify-content:center"><i class="ti ti-plus" style="color:#15803d;font-size:18px"></i></div>
+        <div><div style="font-size:14px;font-weight:500">Schedule New Exam</div><div style="font-size:11.5px;color:var(--ink3)">Create exam event</div></div>
+      </div>
+      <div style="font-size:12px;color:var(--ink3)">Set exam name, classes, date range, duration, and syllabus coverage. Auto-generates hall tickets.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="ph"><div class="ph-title">Gradebook — Unit Test I</div>
+      <div class="ph-ml">
+        <select class="inp"><option>Class X-A</option><option>Class X-B</option><option>Class IX-A</option></select>
+        <button class="btn" onclick="sendPrompt('How does the digital gradebook work in EduPrime?')">Export Report Cards ↗</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="tbl" style="table-layout:auto">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Math</th><th>Science</th><th>English</th><th>Social St.</th><th>Hindi</th>
+            <th>Total</th><th>Grade</th><th>Rank</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="av" style="background:#dbeafe;color:#1d4ed8">AS</span>Aryan Sharma</td><td>88</td><td>92</td><td>79</td><td>74</td><td>85</td><td style="font-weight:500">418/500</td><td><span class="badge" style="background:#dcfce7;color:#15803d">A</span></td><td>3</td></tr>
+          <tr><td><span class="av" style="background:#fce7f3;color:#be185d">PG</span>Priya Gupta</td><td>96</td><td>98</td><td>91</td><td>88</td><td>93</td><td style="font-weight:500">466/500</td><td><span class="badge" style="background:#dcfce7;color:#15803d">A+</span></td><td>1</td></tr>
+          <tr><td><span class="av" style="background:#fef9c3;color:#854d0e">RK</span>Rohan Khanna</td><td>71</td><td>68</td><td>75</td><td>72</td><td>69</td><td style="font-weight:500">355/500</td><td><span class="badge" style="background:#fef9c3;color:#854d0e">B</span></td><td>18</td></tr>
+          <tr><td><span class="av" style="background:#ede9fe;color:#6d28d9">AM</span>Ananya Mehta</td><td>94</td><td>91</td><td>88</td><td>85</td><td>90</td><td style="font-weight:500">448/500</td><td><span class="badge" style="background:#dcfce7;color:#15803d">A+</span></td><td>2</td></tr>
+          <tr><td><span class="av" style="background:#dcfce7;color:#166534">KS</span>Karan Singh</td><td>62</td><td>58</td><td>71</td><td>65</td><td>60</td><td style="font-weight:500">316/500</td><td><span class="badge" style="background:#fce7f3;color:#9f1239">C+</span></td><td>31</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ENROLL STUDENT PAGE -->
+<div class="page" id="page-enroll">
+  <div style="max-width:600px">
+    <div class="panel">
+      <div class="ph"><div class="ph-title"><i class="ti ti-user-plus" style="margin-right:6px;color:var(--accent)"></i>Enroll New Student</div></div>
+      <div style="padding:18px">
+        <div class="section-hd">Personal Information</div>
+        <div class="form-grid">
+          <div class="form-row"><label>First name</label><input class="inp" type="text" placeholder="e.g. Aryan" value=""></div>
+          <div class="form-row"><label>Last name</label><input class="inp" type="text" placeholder="e.g. Sharma"></div>
+          <div class="form-row"><label>Date of birth</label><input class="inp" type="date"></div>
+          <div class="form-row"><label>Gender</label>
+            <select class="inp"><option>Select</option><option>Male</option><option>Female</option><option>Other</option></select>
+          </div>
+          <div class="form-row" style="grid-column:1/-1"><label>Address</label><input class="inp" type="text" placeholder="Full address" style="width:100%"></div>
+        </div>
+
+        <div class="section-hd">Academic Details</div>
+        <div class="form-grid">
+          <div class="form-row"><label>Class</label>
+            <select class="inp"><option>Select class</option><option>Class VI</option><option>Class VII</option><option>Class VIII</option><option>Class IX</option><option>Class X</option><option>Class XI</option><option>Class XII</option></select>
+          </div>
+          <div class="form-row"><label>Section</label>
+            <select class="inp"><option>Select section</option><option>A</option><option>B</option><option>C</option></select>
+          </div>
+          <div class="form-row"><label>Academic year</label>
+            <select class="inp"><option>2025–26</option><option>2026–27</option></select>
+          </div>
+          <div class="form-row"><label>Admission type</label>
+            <select class="inp"><option>New admission</option><option>Transfer</option><option>Re-admission</option></select>
+          </div>
+        </div>
+
+        <div class="section-hd">Parent / Guardian</div>
+        <div class="form-grid">
+          <div class="form-row"><label>Parent name</label><input class="inp" type="text" placeholder="Father / Mother name"></div>
+          <div class="form-row"><label>Relation</label>
+            <select class="inp"><option>Father</option><option>Mother</option><option>Guardian</option></select>
+          </div>
+          <div class="form-row"><label>Mobile number</label><input class="inp" type="tel" placeholder="+91 XXXXX XXXXX"></div>
+          <div class="form-row"><label>Email address</label><input class="inp" type="email" placeholder="parent@email.com"></div>
+        </div>
+
+        <div class="section-hd">Fee Structure</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 12px;background:var(--bg2);border-radius:var(--r2)">
+            <span>Tuition fee (monthly)</span><span style="font-weight:500">₹4,200</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 12px;background:var(--bg2);border-radius:var(--r2)">
+            <span>Transport fee (optional)</span>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="transport-chk" onchange="updateFeeTotal()"> <span>₹1,200</span></label>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 12px;background:var(--bg2);border-radius:var(--r2)">
+            <span>Lab & Library fee (annual)</span><span style="font-weight:500">₹3,600</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:500;padding:10px 12px;background:var(--bg2);border-radius:var(--r2);border:1px solid var(--bg3)">
+            <span>Total due at admission</span><span id="fee-total" style="color:var(--accent)">₹7,800</span>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:8px">
+          <button class="btn" style="flex:1" onclick="showPage('students',document.querySelectorAll('.ptab')[0])">Cancel</button>
+          <button class="btn btn-primary" style="flex:2" onclick="sendPrompt('What happens after a student is enrolled — what automated workflows trigger in EduPrime?')">Enroll Student ↗</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.0/dist/tabler-icons.min.css">
+<script>
+function showPage(id, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  el.classList.add('active');
+}
+
+const stuData=[
+  {n:'Priya Gupta',cls:'Class X-A',roll:'X-A-01',att:98,grade:'A+',fee:'Paid',ac:'#fce7f3',tc:'#be185d',init:'PG'},
+  {n:'Aryan Sharma',cls:'Class X-A',roll:'X-A-24',att:88,grade:'A',fee:'Paid',ac:'#dbeafe',tc:'#1d4ed8',init:'AS'},
+  {n:'Ananya Mehta',cls:'Class X-A',roll:'X-A-07',att:95,grade:'A+',fee:'Paid',ac:'#ede9fe',tc:'#6d28d9',init:'AM'},
+  {n:'Rohan Khanna',cls:'Class X-B',roll:'X-B-12',att:74,grade:'B',fee:'Due',ac:'#fef9c3',tc:'#854d0e',init:'RK'},
+  {n:'Karan Singh',cls:'Class IX-A',roll:'IX-A-05',att:82,grade:'C+',fee:'Partial',ac:'#dcfce7',tc:'#166534',init:'KS'},
+  {n:'Nisha Patel',cls:'Class IX-B',roll:'IX-B-18',att:91,grade:'A−',fee:'Paid',ac:'#fce7f3',tc:'#9f1239',init:'NP'},
+  {n:'Dev Malhotra',cls:'Class VIII-A',roll:'VIII-A-03',att:96,grade:'A',fee:'Paid',ac:'#cffafe',tc:'#155e75',init:'DM'},
+  {n:'Riya Sharma',cls:'Class XI-B',roll:'XI-B-09',att:79,grade:'B+',fee:'Paid',ac:'#fef9c3',tc:'#713f12',init:'RS'},
+  {n:'Aditya Verma',cls:'Class XII-Sci',roll:'XII-S-14',att:88,grade:'A',fee:'Due',ac:'#ede9fe',tc:'#4c1d95',init:'AV'},
+  {n:'Sana Khan',cls:'Class VII-A',roll:'VII-A-22',att:93,grade:'A+',fee:'Paid',ac:'#dcfce7',tc:'#064e3b',init:'SK'},
+];
+function feeStyle(f){
+  if(f==='Paid')return'background:#dcfce7;color:#15803d';
+  if(f==='Due')return'background:#fee2e2;color:#b91c1c';
+  return'background:#fef9c3;color:#854d0e';
+}
+function attStyle(a){return a>=90?'color:#15803d':a>=75?'color:#854d0e':'color:#b91c1c'}
+function filterStudents(){
+  const q=document.getElementById('stu-search').value.toLowerCase();
+  const cl=document.getElementById('stu-class').value;
+  const sc=document.getElementById('stu-section').value;
+  const filtered=stuData.filter(s=>{
+    if(q&&!s.n.toLowerCase().includes(q)&&!s.roll.toLowerCase().includes(q))return false;
+    if(cl&&!s.cls.includes(cl.replace('Class ','')))return false;
+    return true;
+  });
+  renderStudents(filtered);
+}
+function renderStudents(data){
+  const tb=document.getElementById('stu-tbody');
+  tb.innerHTML=data.map((s,i)=>`<tr onclick="sendPrompt('Show me the full profile and academic history for student ${s.n}')">
+    <td style="color:var(--ink3)">${i+1}</td>
+    <td><span class="av" style="background:${s.ac};color:${s.tc}">${s.init}</span>${s.n}</td>
+    <td>${s.cls}</td>
+    <td style="font-family:monospace;font-size:12px">${s.roll}</td>
+    <td><span style="${attStyle(s.att)};font-weight:500">${s.att}%</span></td>
+    <td><span class="badge" style="background:#dcfce7;color:#15803d">${s.grade}</span></td>
+    <td><span class="badge" style="${feeStyle(s.fee)}">${s.fee}</span></td>
+    <td style="display:flex;gap:4px;padding:10px 8px">
+      <span style="cursor:pointer;color:var(--accent);font-size:12px" onclick="event.stopPropagation();sendPrompt('Edit profile for ${s.n}')"><i class="ti ti-edit"></i></span>
+      <span style="cursor:pointer;color:var(--ink3);font-size:12px" onclick="event.stopPropagation()"><i class="ti ti-eye"></i></span>
+    </td>
+  </tr>`).join('');
+}
+renderStudents(stuData);
+
+const attStudents=['Priya Gupta','Aryan Sharma','Ananya Mehta','Rohan Khanna','Karan Singh','Nisha Patel','Dev Malhotra'];
+const days=['2','3','4','5','6','9','10','11','12','13','16','17','18','19','20'];
+const holidays=[6,13];
+function rndAtt(){const r=Math.random();return r<.04?'A':r<.07?'L':'P';}
+function renderAtt(){
+  const grid=document.getElementById('att-grid');
+  const nameCol=`<div class="att-names"><div class="att-name-hd">Student</div>${attStudents.map(s=>`<div class="att-name-row"><span class="av" style="background:#dbeafe;color:#1d4ed8;width:22px;height:22px;font-size:9px">${s.split(' ').map(x=>x[0]).join('')}</span>${s.split(' ')[0]}</div>`).join('')}</div>`;
+  const daysCol=`<div class="att-days"><div class="att-days-hd">${days.map((d,i)=>`<div class="att-day-cell">${d}${holidays.includes(i)?'<br><span style="font-size:9px;color:#e83b6f">H</span>':''}</div>`).join('')}</div>${attStudents.map(s=>`<div class="att-row">${days.map((d,i)=>holidays.includes(i)?`<div class="att-cell"><div class="att-h">H</div></div>`:i===12&&s===attStudents[0]?`<div class="att-cell"><div class="att-p">P</div></div>`:`<div class="att-cell" onclick="cycleAtt(this)"><div class="att-${rndAtt().toLowerCase()}">${rndAtt()}</div></div>`).join('')}</div>`).join('')}</div>`;
+  grid.innerHTML=nameCol+daysCol;
+}
+function cycleAtt(cell){
+  const d=cell.querySelector('div');
+  const states=[['P','att-p'],['A','att-a'],['L','att-l']];
+  const cur=states.findIndex(s=>d.classList.contains(s[1]));
+  const next=states[(cur+1)%3];
+  d.className=next[1];d.textContent=next[0];
+}
+renderAtt();
+
+const feeData=[
+  {n:'Priya Gupta',cls:'X-A',month:'June 2026',amt:5400,paid:5400,status:'Paid',ac:'#fce7f3',tc:'#be185d',init:'PG'},
+  {n:'Aryan Sharma',cls:'X-A',month:'June 2026',amt:5400,paid:5400,status:'Paid',ac:'#dbeafe',tc:'#1d4ed8',init:'AS'},
+  {n:'Rohan Khanna',cls:'X-B',month:'June 2026',amt:5400,paid:2700,status:'Partial',ac:'#fef9c3',tc:'#854d0e',init:'RK'},
+  {n:'Karan Singh',cls:'IX-A',month:'June 2026',amt:4800,paid:0,status:'Due',ac:'#dcfce7',tc:'#166534',init:'KS'},
+  {n:'Aditya Verma',cls:'XII-S',month:'June 2026',amt:6200,paid:0,status:'Due',ac:'#ede9fe',tc:'#4c1d95',init:'AV'},
+  {n:'Riya Sharma',cls:'XI-B',month:'June 2026',amt:5400,paid:5400,status:'Paid',ac:'#fef9c3',tc:'#713f12',init:'RS'},
+];
+const feeList=document.getElementById('fee-list');
+feeList.innerHTML=feeData.map(f=>`<div class="fee-row-card" onclick="sendPrompt('Show fee details and payment history for ${f.n}')">
+  <div class="av" style="background:${f.ac};color:${f.tc};width:34px;height:34px;font-size:11px">${f.init}</div>
+  <div style="flex:1;min-width:0">
+    <div style="font-size:13px;font-weight:500">${f.n}</div>
+    <div style="font-size:11.5px;color:var(--ink3)">Class ${f.cls} · ${f.month}</div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${Math.round(f.paid/f.amt*100)}%;background:${f.status==='Paid'?'#10b981':f.status==='Partial'?'#f59e0b':'#e83b6f'}"></div></div>
+  </div>
+  <div style="text-align:right;flex-shrink:0">
+    <div style="font-size:13px;font-weight:500">₹${f.paid.toLocaleString('en-IN')} / ₹${f.amt.toLocaleString('en-IN')}</div>
+    <span class="badge" style="${feeStyle(f.status)}">${f.status}</span>
+  </div>
+  ${f.status!=='Paid'?`<button class="btn btn-primary" style="flex-shrink:0;margin-left:8px;font-size:12px" onclick="event.stopPropagation();sendPrompt('How does collecting fee payment and generating receipt work in EduPrime?')">Collect</button>`:'<div style="width:68px"></div>'}
+</div>`).join('');
+
+function updateFeeTotal(){
+  const t=document.getElementById('transport-chk').checked;
+  document.getElementById('fee-total').textContent=t?'₹9,000':'₹7,800';
+}
+</script>

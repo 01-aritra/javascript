@@ -1,0 +1,441 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:var(--color-text-primary);--ink2:var(--color-text-secondary);--ink3:var(--color-text-tertiary);
+  --bg:var(--color-background-tertiary);--bg2:var(--color-background-secondary);--bg3:var(--color-border-tertiary);
+  --card:var(--color-background-primary);
+  --accent:#2d5be3;--accent2:#e83b6f;--accent3:#f59e0b;--accent4:#10b981;--accent5:#8b5cf6;
+  --r:12px;--r2:8px;
+  font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink)
+}
+.page{display:none;flex-direction:column;gap:14px;padding:2px 0}
+.page.active{display:flex}
+.page-tabs{display:flex;gap:0;border-bottom:1px solid var(--bg3);margin-bottom:4px;overflow-x:auto}
+.ptab{padding:9px 14px;font-size:13px;cursor:pointer;color:var(--ink2);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.ptab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500}
+.ptab:hover:not(.active){color:var(--ink)}
+.panel{background:var(--card);border-radius:var(--r);border:1px solid var(--bg3);overflow:hidden}
+.ph{padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bg3);flex-wrap:wrap}
+.ph-title{font-size:13.5px;font-weight:500}
+.ph-ml{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{padding:6px 14px;border-radius:var(--r2);font-size:12.5px;cursor:pointer;border:1px solid var(--bg3);background:var(--card);color:var(--ink);font-family:'DM Sans',sans-serif;transition:background .12s}
+.btn:hover{background:var(--bg2)}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{background:#2348c5}
+.badge{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.inp{height:34px;background:var(--bg2);border:1px solid var(--bg3);border-radius:var(--r2);padding:0 10px;font-size:13px;color:var(--ink);font-family:'DM Sans',sans-serif;outline:none}
+.inp:focus{border-color:var(--accent)}
+select.inp{cursor:pointer}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat{background:var(--card);border-radius:var(--r2);padding:14px 16px;border:1px solid var(--bg3)}
+.stat .lbl{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.stat .num{font-size:22px;font-weight:600;font-family:'Fraunces',serif;line-height:1}
+.stat .sub{font-size:11px;color:var(--ink3);margin-top:4px}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{padding:9px 12px;text-align:left;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);background:var(--bg2);border-bottom:1px solid var(--bg3)}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--bg3);font-size:13px;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--bg2)}
+.av{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;vertical-align:middle;margin-right:8px}
+
+/* Timetable grid */
+.tt-wrap{overflow-x:auto}
+.tt-grid{display:grid;grid-template-columns:80px repeat(6,1fr);min-width:580px;border-left:1px solid var(--bg3);border-top:1px solid var(--bg3)}
+.tt-hd{padding:8px 10px;background:var(--bg2);border-right:1px solid var(--bg3);border-bottom:1px solid var(--bg3);font-size:11.5px;font-weight:500;color:var(--ink2);text-align:center}
+.tt-time{padding:6px 10px;background:var(--bg2);border-right:1px solid var(--bg3);border-bottom:1px solid var(--bg3);font-size:11px;color:var(--ink3);text-align:right;display:flex;align-items:center;justify-content:flex-end}
+.tt-cell{border-right:1px solid var(--bg3);border-bottom:1px solid var(--bg3);padding:6px 8px;min-height:56px;cursor:pointer;transition:background .12s;position:relative}
+.tt-cell:hover{background:var(--bg2)}
+.tt-cell.break{background:var(--bg2);display:flex;align-items:center;justify-content:center}
+.tt-subj{font-size:12px;font-weight:500;line-height:1.3;margin-bottom:2px}
+.tt-teacher{font-size:10.5px;color:var(--ink3)}
+.tt-room{font-size:10px;color:var(--ink3);position:absolute;bottom:5px;right:7px}
+
+/* Payroll table */
+.pay-bar{height:4px;border-radius:20px;background:var(--bg2);overflow:hidden;margin-top:3px;width:80px}
+.pay-fill{height:4px;border-radius:20px;background:var(--accent4)}
+
+/* Notice board */
+.notice-card{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--bg3);cursor:pointer;transition:background .12s}
+.notice-card:hover{background:var(--bg2)}
+.notice-card:last-child{border-bottom:none}
+.notice-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.notice-body .title{font-size:13.5px;font-weight:500;margin-bottom:3px}
+.notice-body .meta{font-size:11.5px;color:var(--ink3)}
+.notice-body .preview{font-size:12px;color:var(--ink2);margin-top:4px;line-height:1.5}
+
+/* Website mockup */
+.web-nav{background:var(--card);border-bottom:1px solid var(--bg3);padding:0 16px;display:flex;align-items:center;gap:16px;height:48px;border-radius:var(--r) var(--r) 0 0}
+.web-logo{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--accent)}
+.web-links{display:flex;gap:14px;margin-left:auto;flex-wrap:wrap}
+.web-link{font-size:12px;color:var(--ink2);cursor:pointer;transition:color .12s;white-space:nowrap}
+.web-link:hover{color:var(--accent)}
+.web-hero{background:var(--accent);color:#fff;padding:32px 24px;text-align:center;position:relative;overflow:hidden}
+.web-hero h1{font-family:'Fraunces',serif;font-size:26px;font-weight:600;margin-bottom:8px}
+.web-hero p{font-size:13.5px;opacity:.85;max-width:440px;margin:0 auto 20px}
+.web-hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.web-btn-w{padding:9px 20px;border-radius:var(--r2);font-size:13px;cursor:pointer;background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.4);font-family:'DM Sans',sans-serif;transition:background .12s}
+.web-btn-w:hover{background:rgba(255,255,255,.28)}
+.web-btn-solid{padding:9px 20px;border-radius:var(--r2);font-size:13px;cursor:pointer;background:#fff;color:var(--accent);border:none;font-family:'DM Sans',sans-serif;font-weight:500;transition:background .12s}
+.web-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--bg3);border-bottom:1px solid var(--bg3)}
+.web-stat{padding:14px 12px;text-align:center;border-right:1px solid var(--bg3);background:var(--card)}
+.web-stat:last-child{border-right:none}
+.web-stat .ws-num{font-size:20px;font-weight:600;font-family:'Fraunces',serif;color:var(--accent)}
+.web-stat .ws-lbl{font-size:11px;color:var(--ink3);margin-top:2px}
+.web-section{padding:20px 18px}
+.web-section h2{font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin-bottom:14px}
+.web-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.web-card{background:var(--bg2);border-radius:var(--r2);padding:14px;border:1px solid var(--bg3);cursor:pointer;transition:background .12s}
+.web-card:hover{background:var(--bg3)}
+.web-card .wc-icon{width:36px;height:36px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.web-card .wc-title{font-size:13px;font-weight:500;margin-bottom:4px}
+.web-card .wc-sub{font-size:11.5px;color:var(--ink3);line-height:1.4}
+.web-news{display:flex;flex-direction:column;gap:10px}
+.news-item{display:flex;gap:12px;padding:12px;background:var(--bg2);border-radius:var(--r2);border:1px solid var(--bg3);cursor:pointer;transition:background .12s}
+.news-item:hover{background:var(--bg3)}
+.news-date{width:44px;text-align:center;flex-shrink:0}
+.news-date .day{font-size:18px;font-weight:600;font-family:'Fraunces',serif;line-height:1;color:var(--accent)}
+.news-date .mon{font-size:10px;color:var(--ink3);text-transform:uppercase}
+.news-info .nt{font-size:13px;font-weight:500;margin-bottom:3px}
+.news-info .ns{font-size:11.5px;color:var(--ink3)}
+.web-login{background:var(--bg2);border-top:1px solid var(--bg3);padding:16px 18px;border-radius:0 0 var(--r) var(--r)}
+.login-portals{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.lp-card{background:var(--card);border-radius:var(--r2);padding:12px;border:1px solid var(--bg3);text-align:center;cursor:pointer;transition:all .12s}
+.lp-card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.lp-card .lp-ic{width:36px;height:36px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center}
+.lp-card .lp-label{font-size:12.5px;font-weight:500;margin-bottom:2px}
+.lp-card .lp-sub{font-size:11px;color:var(--ink3)}
+</style>
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">EduPrime additional modules — Timetable, Payroll, Notices, and public School Website mockup</h2>
+
+<div class="page-tabs">
+  <div class="ptab active" onclick="showPage('timetable',this)"><i class="ti ti-clock" style="margin-right:5px;font-size:13px"></i>Timetable</div>
+  <div class="ptab" onclick="showPage('payroll',this)"><i class="ti ti-cash" style="margin-right:5px;font-size:13px"></i>Payroll</div>
+  <div class="ptab" onclick="showPage('notices',this)"><i class="ti ti-bell" style="margin-right:5px;font-size:13px"></i>Notices</div>
+  <div class="ptab" onclick="showPage('website',this)"><i class="ti ti-world" style="margin-right:5px;font-size:13px"></i>School Website</div>
+</div>
+
+<!-- TIMETABLE -->
+<div class="page active" id="page-timetable">
+  <div class="panel">
+    <div class="ph">
+      <div class="ph-title">Weekly Timetable</div>
+      <div class="ph-ml">
+        <select class="inp" onchange="renderTT()">
+          <option>Class X-A</option><option>Class X-B</option><option>Class IX-A</option><option>Class VIII-B</option>
+        </select>
+        <select class="inp">
+          <option>AY 2025–26</option>
+        </select>
+        <button class="btn" onclick="sendPrompt('How does auto timetable generation work in EduPrime ERP?')">Auto-generate ↗</button>
+        <button class="btn btn-primary" onclick="sendPrompt('How do I export the timetable as a PDF in EduPrime?')">Export PDF ↗</button>
+      </div>
+    </div>
+    <div class="tt-wrap">
+      <div class="tt-grid" id="tt-grid"></div>
+    </div>
+    <div style="display:flex;gap:8px;padding:10px 16px;flex-wrap:wrap;border-top:1px solid var(--bg3)">
+      <span style="font-size:11.5px;color:var(--ink3)">Subject colors:</span>
+      <span style="font-size:11.5px;display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#dbeafe;border:1px solid #93c5fd;display:inline-block"></span>Mathematics</span>
+      <span style="font-size:11.5px;display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#dcfce7;border:1px solid #86efac;display:inline-block"></span>Science</span>
+      <span style="font-size:11.5px;display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#ede9fe;border:1px solid #c4b5fd;display:inline-block"></span>English</span>
+      <span style="font-size:11.5px;display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#fef9c3;border:1px solid #fde68a;display:inline-block"></span>Social St.</span>
+      <span style="font-size:11.5px;display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#fce7f3;border:1px solid #f9a8d4;display:inline-block"></span>Hindi</span>
+      <span style="font-size:11.5px;display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#cffafe;border:1px solid #67e8f9;display:inline-block"></span>Computer</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAYROLL -->
+<div class="page" id="page-payroll">
+  <div class="stats-row">
+    <div class="stat"><div class="lbl">Total staff</div><div class="num">118</div><div class="sub">Teachers + support</div></div>
+    <div class="stat"><div class="lbl">Gross payroll</div><div class="num">₹21.4L</div><div class="sub">June 2026</div></div>
+    <div class="stat"><div class="lbl">Deductions</div><div class="num">₹2.1L</div><div class="sub">PF + Tax + Leave</div></div>
+    <div class="stat"><div class="lbl">Net disbursed</div><div class="num" style="color:#10b981">₹19.3L</div><div class="sub">Processed Jun 1</div></div>
+  </div>
+  <div class="panel">
+    <div class="ph">
+      <div class="ph-title">Salary Register — June 2026</div>
+      <div class="ph-ml">
+        <select class="inp"><option>All Departments</option><option>Teaching</option><option>Administrative</option><option>Support</option></select>
+        <button class="btn" onclick="sendPrompt('How does automated salary calculation work based on attendance in EduPrime?')">Recalculate ↗</button>
+        <button class="btn btn-primary" onclick="sendPrompt('How do I generate and send salary slips as PDF in EduPrime ERP?')">Generate Slips ↗</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="tbl" style="table-layout:fixed">
+        <thead>
+          <tr>
+            <th style="width:180px">Employee</th>
+            <th style="width:100px">Designation</th>
+            <th style="width:80px">Days Present</th>
+            <th style="width:80px">Leaves</th>
+            <th style="width:90px">Basic</th>
+            <th style="width:80px">HRA</th>
+            <th style="width:80px">Deductions</th>
+            <th style="width:90px">Net Pay</th>
+            <th style="width:80px">Status</th>
+          </tr>
+        </thead>
+        <tbody id="payroll-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- NOTICES -->
+<div class="page" id="page-notices">
+  <div style="display:grid;grid-template-columns:1fr 300px;gap:12px">
+    <div>
+      <div class="panel">
+        <div class="ph">
+          <div class="ph-title">Notice Board</div>
+          <div class="ph-ml">
+            <select class="inp"><option>All Types</option><option>Exam</option><option>Event</option><option>Holiday</option><option>General</option></select>
+            <button class="btn btn-primary" onclick="sendPrompt('How do I publish a new notice or announcement in EduPrime?')"><i class="ti ti-plus" style="margin-right:4px"></i>New Notice ↗</button>
+          </div>
+        </div>
+        <div id="notice-list"></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="panel">
+        <div class="ph"><div class="ph-title">Send SMS / Push Alert</div></div>
+        <div style="padding:14px;display:flex;flex-direction:column;gap:10px">
+          <div>
+            <label style="font-size:12px;color:var(--ink2);display:block;margin-bottom:5px;font-weight:500">Audience</label>
+            <select class="inp" style="width:100%"><option>All Students & Parents</option><option>Class X only</option><option>All Teachers</option><option>Everyone</option></select>
+          </div>
+          <div>
+            <label style="font-size:12px;color:var(--ink2);display:block;margin-bottom:5px;font-weight:500">Channel</label>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <label style="display:flex;align-items:center;gap:5px;font-size:12.5px;cursor:pointer"><input type="checkbox" checked> Push</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:12.5px;cursor:pointer"><input type="checkbox" checked> SMS</label>
+              <label style="display:flex;align-items:center;gap:5px;font-size:12.5px;cursor:pointer"><input type="checkbox"> Email</label>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:12px;color:var(--ink2);display:block;margin-bottom:5px;font-weight:500">Message</label>
+            <textarea class="inp" style="width:100%;height:80px;resize:none;padding-top:8px;line-height:1.4" placeholder="Type your message..."></textarea>
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="sendPrompt('How does the SMS and push notification system work in EduPrime ERP?')">Send Alert ↗</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph"><div class="ph-title">Delivery Stats</div></div>
+        <div style="padding:14px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+            <span style="color:var(--ink2)"><i class="ti ti-device-mobile" style="margin-right:4px"></i>Push notifications</span>
+            <span style="font-weight:500;color:#10b981">2,187 sent</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+            <span style="color:var(--ink2)"><i class="ti ti-message" style="margin-right:4px"></i>SMS delivered</span>
+            <span style="font-weight:500;color:#10b981">1,843 sent</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+            <span style="color:var(--ink2)"><i class="ti ti-mail" style="margin-right:4px"></i>Emails sent</span>
+            <span style="font-weight:500">634 sent</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+            <span style="color:var(--ink2)"><i class="ti ti-alert-triangle" style="margin-right:4px"></i>Failed</span>
+            <span style="font-weight:500;color:#e83b6f">12 failed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCHOOL WEBSITE -->
+<div class="page" id="page-website">
+  <div style="border:1px solid var(--bg3);border-radius:var(--r);overflow:hidden">
+    <div class="web-nav">
+      <div class="web-logo"><i class="ti ti-school" style="margin-right:6px;font-size:14px"></i>EduPrime School</div>
+      <div class="web-links">
+        <span class="web-link">Home</span>
+        <span class="web-link">About</span>
+        <span class="web-link">Academics</span>
+        <span class="web-link">Admissions</span>
+        <span class="web-link">Events</span>
+        <span class="web-link">Contact</span>
+        <button class="btn btn-primary" style="padding:5px 12px;font-size:12px" onclick="sendPrompt('How does the public school website connect with the EduPrime ERP backend?')">Student Login</button>
+      </div>
+    </div>
+    <div class="web-hero">
+      <div style="position:absolute;inset:0;opacity:.07;background:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);background-size:16px 16px"></div>
+      <h1>Shaping Tomorrow's Leaders</h1>
+      <p>A nurturing environment where every student discovers their potential through excellence in academics, arts, and athletics.</p>
+      <div class="web-hero-btns">
+        <button class="web-btn-solid" onclick="sendPrompt('Tell me about the online admission inquiry form in EduPrime ERP')">Apply for Admission</button>
+        <button class="web-btn-w">Virtual Tour</button>
+        <button class="web-btn-w">Download Prospectus</button>
+      </div>
+    </div>
+    <div class="web-stats">
+      <div class="web-stat"><div class="ws-num">1,200+</div><div class="ws-lbl">Students enrolled</div></div>
+      <div class="web-stat"><div class="ws-num">87</div><div class="ws-lbl">Expert faculty</div></div>
+      <div class="web-stat"><div class="ws-num">25+</div><div class="ws-lbl">Years of excellence</div></div>
+      <div class="web-stat"><div class="ws-num">98%</div><div class="ws-lbl">Board pass rate</div></div>
+    </div>
+    <div class="web-section">
+      <h2>Why EduPrime School?</h2>
+      <div class="web-cards">
+        <div class="web-card" onclick="sendPrompt('What academic programs does the school offer?')">
+          <div class="wc-icon" style="background:#dbeafe"><i class="ti ti-book" style="color:#1d4ed8;font-size:18px"></i></div>
+          <div class="wc-title">CBSE Curriculum</div>
+          <div class="wc-sub">Classes I–XII with STEM focus and co-scholastic activities</div>
+        </div>
+        <div class="web-card" onclick="sendPrompt('What sports and extracurricular activities are available?')">
+          <div class="wc-icon" style="background:#dcfce7"><i class="ti ti-trophy" style="color:#15803d;font-size:18px"></i></div>
+          <div class="wc-title">Sports & Activities</div>
+          <div class="wc-sub">Cricket, swimming, robotics, debate, music, and fine arts</div>
+        </div>
+        <div class="web-card" onclick="sendPrompt('Tell me about the school lab and digital infrastructure')">
+          <div class="wc-icon" style="background:#ede9fe"><i class="ti ti-device-laptop" style="color:#6d28d9;font-size:18px"></i></div>
+          <div class="wc-title">Smart Classrooms</div>
+          <div class="wc-sub">Digital labs, interactive boards, and 1:1 device programs</div>
+        </div>
+      </div>
+    </div>
+    <div class="web-section" style="padding-top:0">
+      <h2>Latest News & Events</h2>
+      <div class="web-news">
+        <div class="news-item" onclick="sendPrompt('How does the admin publish news and events on the public website via EduPrime ERP?')">
+          <div class="news-date"><div class="day">02</div><div class="mon">Jun</div></div>
+          <div class="news-info"><div class="nt">Unit Test II begins — June 2</div><div class="ns">All classes · Revised schedule now available</div></div>
+        </div>
+        <div class="news-item">
+          <div class="news-date"><div class="day">27</div><div class="mon">May</div></div>
+          <div class="news-info"><div class="nt">Parent-Teacher Meeting — June 7</div><div class="ns">Registration open via parent portal</div></div>
+        </div>
+        <div class="news-item">
+          <div class="news-date"><div class="day">20</div><div class="mon">May</div></div>
+          <div class="news-info"><div class="nt">Annual Sports Day — June 14</div><div class="ns">Student registrations open till June 5</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="web-login">
+      <div style="font-size:12px;color:var(--ink3);margin-bottom:10px;text-align:center">Portal login — select your role to sign in</div>
+      <div class="login-portals">
+        <div class="lp-card" onclick="sendPrompt('How does role-based login and JWT session management work in EduPrime ERP?')">
+          <div class="lp-ic" style="background:#dbeafe"><i class="ti ti-user-shield" style="color:#1d4ed8;font-size:16px"></i></div>
+          <div class="lp-label">Admin</div>
+          <div class="lp-sub">School management</div>
+        </div>
+        <div class="lp-card" onclick="sendPrompt('What features does the teacher web app include?')">
+          <div class="lp-ic" style="background:#dcfce7"><i class="ti ti-user-check" style="color:#15803d;font-size:16px"></i></div>
+          <div class="lp-label">Teacher</div>
+          <div class="lp-sub">Classes & grades</div>
+        </div>
+        <div class="lp-card" onclick="sendPrompt('What can students do on the student web portal?')">
+          <div class="lp-ic" style="background:#ede9fe"><i class="ti ti-school" style="color:#6d28d9;font-size:16px"></i></div>
+          <div class="lp-label">Student</div>
+          <div class="lp-sub">Assignments & diary</div>
+        </div>
+        <div class="lp-card" onclick="sendPrompt('What can parents monitor and do on the parent portal?')">
+          <div class="lp-ic" style="background:#fce7f3"><i class="ti ti-heart" style="color:#be185d;font-size:16px"></i></div>
+          <div class="lp-label">Parent</div>
+          <div class="lp-sub">Progress & fees</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.34.0/dist/tabler-icons.min.css">
+<script>
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  el.classList.add('active');
+}
+
+const days=['Mon','Tue','Wed','Thu','Fri','Sat'];
+const slots=['8:00','9:00','10:00','Break','11:30','12:30','Lunch','2:00','3:00'];
+const subjects=[
+  {s:'Mathematics',t:'M. Kumar',r:'R-12',bg:'#dbeafe',bd:'#93c5fd'},
+  {s:'Science',t:'P. Singh',r:'Lab-1',bg:'#dcfce7',bd:'#86efac'},
+  {s:'English',t:'S. Roy',r:'R-12',bg:'#ede9fe',bd:'#c4b5fd'},
+  {s:'Social St.',t:'A. Joshi',r:'R-12',bg:'#fef9c3',bd:'#fde68a'},
+  {s:'Hindi',t:'R. Mishra',r:'R-12',bg:'#fce7f3',bd:'#f9a8d4'},
+  {s:'Computer',t:'V. Nair',r:'Lab-2',bg:'#cffafe',bd:'#67e8f9'},
+];
+const tt=[
+  [0,2,4,1,3,5],
+  [2,0,1,5,4,3],
+  [null,null,null,null,null,null],
+  [1,3,0,2,5,4],
+  [4,5,3,0,2,1],
+  [null,null,null,null,null,null],
+  [3,4,5,2,1,0],
+];
+function renderTT(){
+  const g=document.getElementById('tt-grid');
+  let html=`<div class="tt-hd"></div>${days.map(d=>`<div class="tt-hd">${d}</div>`).join('')}`;
+  slots.forEach((sl,si)=>{
+    const isBreak=sl==='Break'||sl==='Lunch';
+    html+=`<div class="tt-time">${sl}</div>`;
+    if(isBreak){
+      html+=`<div class="tt-cell break" style="grid-column:span 6"><span style="font-size:12px;color:var(--ink3);font-weight:500">${sl}</span></div>`;
+    } else {
+      days.forEach((d,di)=>{
+        const idx=tt[si][di];
+        if(idx===null){html+=`<div class="tt-cell"></div>`;return;}
+        const sub=subjects[idx];
+        html+=`<div class="tt-cell" style="background:${sub.bg};border-right:1px solid ${sub.bd}" onclick="sendPrompt('Tell me more about the ${sub.s} class in the timetable')"><div class="tt-subj">${sub.s}</div><div class="tt-teacher">${sub.t}</div><div class="tt-room">${sub.r}</div></div>`;
+      });
+    }
+  });
+  g.innerHTML=html;
+}
+renderTT();
+
+const payData=[
+  {n:'Mahesh Kumar',init:'MK',ac:'#dbeafe',tc:'#1d4ed8',role:'Sr. Teacher',days:26,leaves:0,basic:48000,hra:12000,ded:6200},
+  {n:'Priya Singh',init:'PS',ac:'#fce7f3',tc:'#be185d',role:'Teacher',days:25,leaves:1,basic:38000,hra:9500,ded:4800},
+  {n:'Arun Joshi',init:'AJ',ac:'#fef9c3',tc:'#854d0e',role:'Teacher',days:24,leaves:2,basic:36000,hra:9000,ded:5200},
+  {n:'Sunita Roy',init:'SR',ac:'#dcfce7',tc:'#166534',role:'Teacher',days:26,leaves:0,basic:40000,hra:10000,ded:5100},
+  {n:'Vijay Nair',init:'VN',ac:'#ede9fe',tc:'#6d28d9',role:'HoD',days:26,leaves:0,basic:55000,hra:13750,ded:8400},
+  {n:'Rekha Mishra',init:'RM',ac:'#cffafe',tc:'#155e75',role:'Teacher',days:23,leaves:3,basic:34000,hra:8500,ded:5800},
+];
+const ptb=document.getElementById('payroll-tbody');
+ptb.innerHTML=payData.map(p=>{
+  const net=p.basic+p.hra-p.ded;
+  const pct=Math.round(p.days/26*100);
+  return`<tr onclick="sendPrompt('Show salary slip and details for ${p.n}')">
+    <td><span class="av" style="background:${p.ac};color:${p.tc}">${p.init}</span>${p.n}</td>
+    <td style="color:var(--ink2)">${p.role}</td>
+    <td><span style="font-weight:500">${p.days}/26</span><div class="pay-bar"><div class="pay-fill" style="width:${pct}%"></div></div></td>
+    <td style="color:${p.leaves>1?'#e83b6f':'var(--ink2)'}">${p.leaves}</td>
+    <td>₹${p.basic.toLocaleString('en-IN')}</td>
+    <td>₹${p.hra.toLocaleString('en-IN')}</td>
+    <td style="color:#e83b6f">−₹${p.ded.toLocaleString('en-IN')}</td>
+    <td style="font-weight:500;color:#10b981">₹${net.toLocaleString('en-IN')}</td>
+    <td><span class="badge" style="background:#dcfce7;color:#15803d">Paid</span></td>
+  </tr>`;
+}).join('');
+
+const notices=[
+  {title:'Unit Test II — Full Schedule Released',type:'Exam',date:'Jun 1, 2026',preview:'All classes VI–XII. Exams run from 9 AM to 11:30 AM. Hall tickets available on the student portal.',dot:'#e83b6f'},
+  {title:'Parent-Teacher Meeting — June 7',type:'Event',date:'May 27, 2026',preview:'Slot booking via parent portal opens June 3. Each meeting is 10 minutes. Bring your ward\'s diary.',dot:'#f59e0b'},
+  {title:'Annual Sports Day Registration Open',type:'Event',date:'May 20, 2026',preview:'Students wishing to participate must register via the student portal or submit forms to class teachers by June 5.',dot:'#10b981'},
+  {title:'Summer vacation schedule',type:'Holiday',date:'May 15, 2026',preview:'School closed from June 30 to July 14, 2026. Online classes optional during this period.',dot:'#8b5cf6'},
+  {title:'Revised fee structure — AY 2026–27',type:'General',date:'May 10, 2026',preview:'Tuition and transport fees for academic year 2026–27 have been updated. Kindly review and complete payment.',dot:'#2d5be3'},
+];
+const typeStyle={Exam:'background:#fee2e2;color:#b91c1c',Event:'background:#dcfce7;color:#15803d',Holiday:'background:#ede9fe;color:#6d28d9',General:'background:#dbeafe;color:#1d4ed8'};
+document.getElementById('notice-list').innerHTML=notices.map(n=>`<div class="notice-card" onclick="sendPrompt('Show me the full notice: ${n.title}')">
+  <div class="notice-dot" style="background:${n.dot}"></div>
+  <div class="notice-body" style="flex:1;min-width:0">
+    <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:4px">
+      <div class="title" style="flex:1">${n.title}</div>
+      <span class="badge" style="${typeStyle[n.type]};flex-shrink:0">${n.type}</span>
+    </div>
+    <div class="meta">${n.date}</div>
+    <div class="preview">${n.preview}</div>
+  </div>
+</div>`).join('');
+</script>
