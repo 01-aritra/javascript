@@ -1,0 +1,12 @@
+{
+  "name": "java-script",
+  "version": "1.0.0",
+  "description": "in this repository total javascript learnings from a - z is scripted",
+  "main": "test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
